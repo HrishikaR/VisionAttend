@@ -1,23 +1,57 @@
 import streamlit as st
-from src.database.db import create_subject
+from src.database.db import enroll_student_to_subject
+from src.database.config import supabase
+import time
 
 
+@st.dialog("Quick Enrollment")
+def auto_enroll_dialog(subject_code):
+    student_id = st.session_state.student_data["student_id"]
 
-@st.dialog("Create New Subject")
-def create_subject_dialog(teacher_id):
-    st.write("Enter the details of new subject")
-    sub_id = st.text_input("Subject Code", placeholder="CS101")
-    sub_name = st.text_input("Subject Name", placeholder="Introduction to Computer Science")
-    sub_section = st.text_input("Section", placeholder="A")
+    res = (
+        supabase.table("subjects")
+        .select("subject_id, name")
+        .eq("subject_code", subject_code)
+        .execute()
+    )
 
+    if not res.data:
+        st.error("Subject Code not found!")
+        if st.button("Close"):
+            st.query_params.clear()
+            st.rerun()
+        return
 
-    if st.button("Create Subject Now", type='primary', width='stretch'):
-        if sub_id and sub_name and sub_section:
-            try:
-                create_subject(sub_id, sub_name, sub_section, teacher_id)
-                st.toast("Subject Created Succesfully!")
-                st.rerun()
-            except Exception as e:
-                st.error(f"Error: {str(e)}")
-        else:
-            st.warning("Please fill all the fields")
+    subject = res.data[0]
+
+    check = (
+        supabase.table("subject_students")
+        .select("*")
+        .eq("subject_id", subject["subject_id"])
+        .eq("student_id", student_id)
+        .execute()
+    )
+
+    if check.data:
+        st.info("You're already enrolled!")
+        if st.button("Got it!"):
+            st.query_params.clear()
+            st.rerun()
+        return
+
+    st.markdown(f"Would you like to enroll in **{subject['name']}**?")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("No thanks"):
+            st.query_params.clear()
+            st.rerun()
+
+    with col2:
+        if st.button("Yes, enroll now!", type="primary", use_container_width=True):
+            enroll_student_to_subject(student_id, subject["subject_id"])
+            st.success("Joined successfully!")
+            st.query_params.clear()
+            time.sleep(2)
+            st.rerun()
