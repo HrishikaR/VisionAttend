@@ -19,9 +19,8 @@
 
 VisionAttend is a smart attendance system designed to eliminate manual attendance processes by leveraging Artificial Intelligence and Computer Vision.
 
-The application enables teachers to create subjects, enroll students using secure QR codes, register biometric data, and automatically mark attendance using classroom images and voice recordings.
+The application enables teachers to create subjects, enroll students using secure QR codes, register biometric data, and automatically mark attendance using classroom images and voice recordings.The system combines facial recognition and speaker recognition to improve reliability while maintaining a simple and intuitive interface built with Streamlit.
 
-The system combines facial recognition and speaker recognition to improve reliability while maintaining a simple and intuitive interface built with Streamlit.
 [![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge)](https://visionattend-uq3y9wqypivnmzrujgv9nl.streamlit.app/)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/HrishikaR/VisionAttend)
 ---
